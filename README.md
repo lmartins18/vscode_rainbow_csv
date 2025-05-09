@@ -1,4 +1,4 @@
-# Rainbow CSV
+# Rainbow CSV (FPP)
 
 ## Main Features
 * Highlights columns in CSV, TSV, semicolon, and pipe-separated files with distinct colors.
