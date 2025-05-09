@@ -2,7 +2,7 @@ name: Package and Release VSCode Extension
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   build-and-release:
