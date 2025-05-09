@@ -764,6 +764,29 @@ async function choose_dynamic_separator(integration_test_options=null) {
     dialect_panel.webview.onDidReceiveMessage(function(message) { handle_dialect_selection_message(active_doc, dialect_panel, message, selected_separator, log_wrapper, integration_test_options); });
 }
 
+async function set_EDI_separator_tilde_and_align_with_whitespace(integration_test_options = null) {
+    let active_editor = get_active_editor();
+    if (!active_editor)
+        return;
+    var active_doc = get_active_doc(active_editor);
+    if (!is_eligible_doc(active_doc)) {
+        return;
+    }
+    let delim = '~';
+    let policy = 'simple_option';
+    let log_wrapper = new StackContextLogWrapper('choose_dynamic_separator');
+    log_wrapper.log_doc_event('starting', active_doc);
+
+    await save_dynamic_info(extension_context, active_doc.fileName, make_dialect_info(delim, policy));
+        if (active_doc.languageId == DYNAMIC_CSV && is_active_doc(active_doc)) {
+            // Filetype was already "dynamic csv", just re-highlight the file properly.
+            await enable_rainbow_features_if_csv(active_doc, log_wrapper);
+        } else {
+            await vscode.languages.setTextDocumentLanguage(active_doc, DYNAMIC_CSV);
+    }
+    await content_modifying_align_table();
+}
+
 
 function show_choose_dynamic_separator_button() {
     if (!dynamic_dialect_select_button)
@@ -2565,7 +2588,7 @@ async function activate(context) {
     var toggle_row_background_cmd = vscode.commands.registerCommand('rainbow-csv.ToggleRowBackground', toggle_row_background);
     var toggle_column_tracking_cmd = vscode.commands.registerCommand('rainbow-csv.ToggleColumnTracking', toggle_column_tracking);
     var internal_test_cmd = vscode.commands.registerCommand('rainbow-csv.InternalTest', run_internal_test_cmd);
-
+    var align_EDI_tilde_columns = vscode.commands.registerCommand('rainbow-csv.AlignEDITildeColumns', set_EDI_separator_tilde_and_align_with_whitespace);
     // INFO: vscode.workspace and vscode.window lifetime are likely guaranteed to cover the extension lifetime (period between activate() and deactivate()) but I haven't found a confirmation yet.
     var doc_open_event = vscode.workspace.onDidOpenTextDocument(handle_doc_open);
     var doc_close_event = vscode.workspace.onDidCloseTextDocument(handle_doc_close);
@@ -2616,6 +2639,7 @@ async function activate(context) {
     context.subscriptions.push(toggle_row_background_cmd);
     context.subscriptions.push(toggle_column_tracking_cmd);
     context.subscriptions.push(internal_test_cmd);
+    context.subscriptions.push(align_EDI_tilde_columns);
 
     context.subscriptions.push(doc_open_event);
     context.subscriptions.push(doc_close_event);

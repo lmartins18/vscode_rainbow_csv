@@ -1,9 +1,9 @@
 {
-    "name": "rainbow-csv",
-    "displayName": "Rainbow CSV",
+    "name": "FPP-rainbow-csv",
+    "displayName": "FPP's own Rainbow CSV",
     "description": "Highlight CSV and TSV files, Run SQL-like queries",
-    "version": "3.19.0",
-    "publisher": "mechatroner",
+    "version": "3.19.0-FPP",
+    "publisher": "fpp",
     "license": "MIT",
     "icon": "rainbow_csv_logo.png",
     "engines": {
@@ -478,6 +478,11 @@
             {
                 "command": "rainbow-csv.SampleTail",
                 "title": "Preview big CSV: tail"
+            },
+            {
+                "command": "rainbow-csv.AlignEDITildeColumns",
+                "category": "Rainbow CSV",
+                "title": "Set EDI file '~' delimiter and Align Columns with whitespaces"
             }
         ],
         "semanticTokenScopes": [
